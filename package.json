@@ -1,0 +1,36 @@
+{
+  "name": "dailyUI",
+  "version": "1.0.0",
+  "description": "日常开箱即用的UI组件",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack serve --open --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js",
+    "watch": "webpack --watch"
+  },
+  "keywords": [
+    "dailyUI"
+  ],
+  "homepage": "https://github.com/OFEXJS/dailyUI.git",
+  "author": "zhengjialux",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.22.9",
+    "@babel/core": "^7.22.9",
+    "@babel/preset-env": "^7.22.9",
+    "@babel/preset-react": "^7.22.5",
+    "babel-loader": "^9.1.3",
+    "css-loader": "^6.8.1",
+    "csv-loader": "^3.0.5",
+    "less": "^4.2.0",
+    "less-loader": "^11.1.3",
+    "style-loader": "^3.3.3",
+    "xml-loader": "^1.2.1"
+  },
+  "dependencies": {
+    "antd": "^5.8.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
