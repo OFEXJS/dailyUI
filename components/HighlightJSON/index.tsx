@@ -16,41 +16,39 @@ type HighlightJSONProps = {
   styles?: CSSProperties;
 };
 
-export const HighlightJSON = ({
+const HighlightJSON = ({
   data,
   title,
   copyEnabled,
   loading = false,
   styles = {},
 }: HighlightJSONProps) => {
-  const codeRef = useRef(null);
-  const lineNumbersRef = useRef(null);
-
-  const generateLineNumbers = (jsonString: string) => {
-    if (lineNumbersRef.current) {
-      const lines = jsonString.split("\n");
-      lineNumbersRef.current.innerHTML = lines
-        .map((_, index) => `<div class="line-number">${index + 1}</div>`)
-        .join("");
-    }
-  };
+  const codeRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (codeRef.current && data) {
       // 格式化 JSON
       const formattedJSON = JSON.stringify(data, null, 2);
+
+      // 先设置纯文本，让 highlight.js 处理
       codeRef.current.textContent = formattedJSON;
 
-      // 清除之前可能存在的高亮标记，避免重复高亮报错
-      if (codeRef.current?.dataset && codeRef.current?.dataset.highlighted) {
+      // 高亮代码
+      if (codeRef.current.dataset.highlighted) {
         delete codeRef.current.dataset.highlighted;
       }
-
-      // 高亮代码
       hljs.highlightElement(codeRef.current);
 
-      // 生成行号
-      generateLineNumbers(formattedJSON);
+      // 高亮完成后，添加行包裹和行号支持
+      const highlightedHTML = codeRef.current.innerHTML;
+
+      // 将高亮后的 HTML 每行包裹 <span class="line">
+      const lines = highlightedHTML.split("\n");
+      const wrappedLines = lines
+        .map((line) => `<span class="line">${line}</span>`) // 空行不添加占位符
+        .join("\n");
+
+      codeRef.current.innerHTML = wrappedLines;
     }
   }, [data]);
 
@@ -93,49 +91,38 @@ export const HighlightJSON = ({
                   {title && <span style={{ color: "#586069" }}>{title}</span>}
                 </div>
                 {copyEnabled && (
-                  <Button
-                    onClick={copyToClipboard}
-                    color="green"
-                    variant="solid"
-                  >
+                  <Button onClick={copyToClipboard} type="primary" size="small">
                     复制
                   </Button>
                 )}
               </div>
             )}
 
-            {/* 内容区域 */}
-            <div style={{ display: "flex", background: "white" }}>
-              {/* 行号 */}
-              <div
-                ref={lineNumbersRef}
-                style={{
-                  padding: "1em 8px 12px 16px",
-                  textAlign: "right",
-                  background: "#f6f8fa",
-                  color: "#2F8099",
-                  userSelect: "none",
-                  borderRight: "1px solid #e1e4e8",
-                  minWidth: "40px",
-                  lineHeight: "1.5",
-                  fontSize: "14px",
-                }}
-              />
-
-              {/* 代码 */}
+            {/* 内容区域 - 单一 pre，行号由 CSS counter 实现 */}
+            <div style={{ background: "white" }}>
               <pre
                 style={{
                   margin: 0,
-                  flex: 1,
-                  overflowX: "auto",
-                  lineHeight: "1.5",
+                  padding: "1em 16px 12px 70px", // 左侧留 70px 给行号
+                  overflowY: "auto",
+                  lineHeight: "0", // 与 .line 类的行高保持一致
                   fontSize: "14px",
+                  whiteSpace: "pre-wrap",
+                  wordBreak: "break-word",
+                  counterReset: "line 0", // 在 pre 上重置
+                  position: "relative",
                 }}
               >
                 <code
                   ref={codeRef}
-                  className="language-json"
-                  style={{ background: "#fff" }}
+                  className="language-json hljs"
+                  style={{
+                    padding: 0,
+                    background: "#fff",
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+                    display: "block",
+                  }}
                 />
               </pre>
             </div>
@@ -149,3 +136,5 @@ export const HighlightJSON = ({
     </div>
   );
 };
+
+export default HighlightJSON;

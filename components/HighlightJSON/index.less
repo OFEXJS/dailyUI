@@ -22,3 +22,52 @@
 .hljs-comment {
     color: #AF8E6F !important;
 }
+
+pre {
+    counter-reset: line 0;
+    position: relative;
+}
+
+/* 行号区域背景色 */
+pre::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 60px;
+    background-color: #f6f8fa;
+    z-index: -1;
+}
+
+/* 行号区域和代码区域的分隔线 */
+pre::before {
+    content: '';
+    position: absolute;
+    left: 60px; /* 位于行号右侧 */
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: #e1e4e8;
+    z-index: 1;
+}
+
+pre .line {
+    counter-increment: line;
+    display: block;
+    line-height: 20px; /* 减小行高，缩小行间距 */
+}
+
+pre .line::before {
+    content: counter(line);
+    position: absolute;
+    left: 16px;
+    width: 40px;
+    text-align: right;
+    color: #2F8099;
+    user-select: none;
+    pointer-events: none;
+    font-size: 14px;
+    line-height: 20px;
+    background: "#f6f8fa";
+}
